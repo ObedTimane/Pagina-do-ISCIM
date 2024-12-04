@@ -1,0 +1,556 @@
+<html><head><base href="." />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cursos - ISCIM</title>
+<style>
+  :root {
+    --primary-color: #FF6B00;
+    --secondary-color: #FFFFFF;
+    --text-dark: #333333;
+    --text-light: #666666;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  body {
+    background-color: var(--secondary-color);
+  }
+
+  .header {
+    background-color: var(--primary-color);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+  }
+
+  .logo {
+    color: var(--secondary-color);
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .nav-menu {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .nav-menu a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.3s;
+  }
+
+  .nav-menu a:hover {
+    opacity: 0.8;
+  }
+
+  /* Mobile menu button */
+  .mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--secondary-color);
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  /* New Courses Section Styles */
+  .courses-section {
+    max-width: 1200px;
+    margin: 4rem auto;
+    padding: 0 20px;
+  }
+
+  .course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .course-card {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+  }
+
+  .course-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .course-details {
+    display: none;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+  }
+
+  .course-details.active {
+    display: block;
+  }
+
+  .course-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+  }
+
+  .course-card button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1rem;
+  }
+
+  .course-card button:hover {
+    background: #FF8533;
+  }
+
+  .course-faculty {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+  }
+
+  .course-faculty img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 1rem;
+  }
+
+  footer {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 3rem 0;
+    margin-top: 4rem;
+  }
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 0 20px;
+  }
+
+  .footer-section h4 {
+    margin-bottom: 1rem;
+  }
+
+  .footer-section p, .footer-section a {
+    color: var(--secondary-color);
+    opacity: 0.8;
+    text-decoration: none;
+    line-height: 1.6;
+  }
+
+  @media screen and (max-width: 768px) {
+    .mobile-menu-btn {
+      display: block;
+    }
+    
+    .nav-menu {
+      display: none;
+      width: 100%;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: var(--primary-color);
+      flex-direction: column;
+      padding: 1rem;
+    }
+    
+    .nav-menu.active {
+      display: flex;
+    }
+    
+    .nav-menu a {
+      padding: 0.5rem 0;
+    }
+    
+    .nav-container {
+      flex-wrap: wrap;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    .course-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .courses-section {
+      margin: 2rem auto;
+    }
+    
+    .course-card {
+      padding: 1.5rem;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .footer-content {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    
+    .footer-section {
+      padding: 1rem 0;
+    }
+  }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const navMenu = document.querySelector('.nav-menu');
+
+    mobileMenuBtn.addEventListener('click', function() {
+        navMenu.classList.toggle('active');
+        this.textContent = navMenu.classList.contains('active') ? '✕' : '☰';
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.nav-container')) {
+            navMenu.classList.remove('active');
+            mobileMenuBtn.textContent = '☰';
+        }
+    });
+
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            navMenu.classList.remove('active');
+            mobileMenuBtn.textContent = '☰';
+        }
+    });
+});
+
+function toggleDetails(button) {
+  const details = button.nextElementSibling;
+  details.classList.toggle('active');
+  button.textContent = details.classList.contains('active') ? 'Ocultar Detalhes' : 'Ver Detalhes';
+}
+</script>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav-container">
+      <a href="https://iscim.edu.mz" class="logo">ISCIM</a>
+      <button class="mobile-menu-btn">☰</button>
+      <div class="nav-menu">
+        <a href="sobre.html">Sobre</a>
+        <a href="cursos.html">Cursos</a>
+        <a href="admissao.html">Admissão</a>
+        <a href="contato.html">Contato</a>
+        <a href="estudante.html">Estudante</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="courses-section">
+    <h2>Nossos Cursos</h2>
+    
+    <div class="course-grid">
+      <div class="course-card">
+        <h3>Licenciatura em Gestão de Empresas</h3>
+        <p>Forme-se em gestão empresarial com uma abordagem moderna e prática.</p>
+        <button onclick="toggleDetails(this)">Ver Detalhes</button>
+        <div class="course-details">
+          <h4>Objetivos</h4>
+          <p>Formar profissionais capacitados para gerir organizações...</p>
+          
+          <h4>Duração</h4>
+          <p>4 anos (8 semestres)</p>
+          
+          <h4>Estrutura Curricular</h4>
+          <ul>
+            <li>Fundamentos de Gestão</li>
+            <li>Contabilidade</li>
+            <li>Marketing</li>
+          </ul>
+          
+          <h4>Coordenador do Curso</h4>
+          <div class="course-faculty">
+            <img src="coordinator.jpg" alt="Foto do Coordenador do Curso" width="50" height="50">
+            <p>Prof. Dr. [Nome]</p>
+          </div>
+          
+          <a href="https://iscim.edu.mz/inscricao" class="cta-button">Inscrever-se</a>
+        </div>
+      </div>
+
+      <div class="course-card">
+        <h3>Licenciatura em Informática de Sistemas</h3>
+        <p>Desenvolva suas habilidades em tecnologia da informação e sistemas digitais.</p>
+        <button onclick="toggleDetails(this)">Ver Detalhes</button>
+        <div class="course-details">
+          <h4>Objetivos</h4>
+          <p>Preparar profissionais para atender as demandas do mercado de tecnologia...</p>
+          
+          <h4>Duração</h4>
+          <p>4 anos (8 semestres)</p>
+          
+          <h4>Estrutura Curricular</h4>
+          <ul>
+            <li>Programação</li>
+            <li>Engenharia de Software</li>
+            <li>Redes de Computadores</li>
+          </ul>
+          
+          <h4>Coordenador do Curso</h4>
+          <div class="course-faculty">
+            <img src="coordinator.jpg" alt="Foto do Coordenador do Curso" width="50" height="50">
+            <p>Prof. Dr. [Nome]</p>
+          </div>
+          
+          <a href="https://iscim.edu.mz/inscricao" class="cta-button">Inscrever-se</a>
+        </div>
+      </div>
+
+      <div class="course-card">
+        <h3>Licenciatura em Informática de Gestão</h3>
+        <p>Forme-se para administrar e implementar soluções em tecnologia de informação.</p>
+        <button onclick="toggleDetails(this)">Ver Detalhes</button>
+        <div class="course-details">
+          <h4>Objetivos</h4>
+          <p>Capacitar profissionais na gestão de sistemas de informação...</p>
+          
+          <h4>Duração</h4>
+          <p>4 anos (8 semestres)</p>
+          
+          <h4>Estrutura Curricular</h4>
+          <ul>
+            <li>Gestão de TI</li>
+            <li>Banco de Dados</li>
+            <li>Gestão de Projetos</li>
+          </ul>
+          
+          <h4>Coordenador do Curso</h4>
+          <div class="course-faculty">
+            <img src="coordinator.jpg" alt="Foto do Coordenador do Curso" width="50" height="50">
+            <p>Prof. Dr. [Nome]</p>
+          </div>
+          
+          <a href="https://iscim.edu.mz/inscricao" class="cta-button">Inscrever-se</a>
+        </div>
+      </div>
+
+      <div class="course-card">
+        <h3>Licenciatura em Direito</h3>
+        <p>Estude as leis e prepare-se para defender os direitos em várias áreas.</p>
+        <button onclick="toggleDetails(this)">Ver Detalhes</button>
+        <div class="course-details">
+          <h4>Objetivos</h4>
+          <p>Formar advogados e especialistas no entendimento da legislação...</p>
+          
+          <h4>Duração</h4>
+          <p>4 anos (8 semestres)</p>
+          
+          <h4>Estrutura Curricular</h4>
+          <ul>
+            <li>Direito Civil</li>
+            <li>Direito Penal</li>
+            <li>Direito Administrativo</li>
+          </ul>
+          
+          <h4>Coordenador do Curso</h4>
+          <div class="course-faculty">
+            <img src="coordinator.jpg" alt="Foto do Coordenador do Curso" width="50" height="50">
+            <p>Prof. Dr. [Nome]</p>
+          </div>
+          
+          <a href="https://iscim.edu.mz/inscricao" class="cta-button">Inscrever-se</a>
+        </div>
+      </div>
+
+      <div class="course-card">
+        <h3>Licenciatura em Comunicação e Relações Empresariais</h3>
+        <p>Desenvolva habilidades na comunicação e comércio global.</p>
+        <button onclick="toggleDetails(this)">Ver Detalhes</button>
+        <div class="course-details">
+          <h4>Objetivos</h4>
+          <p>Capacitar profissionais para atuar na área de comunicação...</p>
+          
+          <h4>Duração</h4>
+          <p>4 anos (8 semestres)</p>
+          
+          <h4>Estrutura Curricular</h4>
+          <ul>
+            <li>Teoria da Comunicação</li>
+            <li>Relações Públicas</li>
+            <li>Marketing Empresarial</li>
+          </ul>
+          
+          <h4>Coordenador do Curso</h4>
+          <div class="course-faculty">
+            <img src="coordinator.jpg" alt="Foto do Coordenador do Curso" width="50" height="50">
+            <p>Prof. Dr. [Nome]</p>
+          </div>
+          
+          <a href="https://iscim.edu.mz/inscricao" class="cta-button">Inscrever-se</a>
+        </div>
+      </div>
+
+      <div class="course-card">
+        <h3>Licenciatura em Multimédia</h3>
+        <p>Explore a criação de conteúdo digital e suas aplicações.</p>
+        <button onclick="toggleDetails(this)">Ver Detalhes</button>
+        <div class="course-details">
+          <h4>Objetivos</h4>
+          <p>Formar especialistas em produção multimédia e design...</p>
+          
+          <h4>Duração</h4>
+          <p>4 anos (8 semestres)</p>
+          
+          <h4>Estrutura Curricular</h4>
+          <ul>
+            <li>Produção de Vídeo</li>
+            <li>Design Gráfico</li>
+            <li>Desenvolvimento Web</li>
+          </ul>
+          
+          <h4>Coordenador do Curso</h4>
+          <div class="course-faculty">
+            <img src="coordinator.jpg" alt="Foto do Coordenador do Curso" width="50" height="50">
+            <p>Prof. Dr. [Nome]</p>
+          </div>
+          
+          <a href="https://iscim.edu.mz/inscricao" class="cta-button">Inscrever-se</a>
+        </div>
+      </div>
+
+      <div class="course-card">
+        <h3>Licenciatura em Marketing</h3>
+        <p>Aprenda a criar e administrar estratégias de marketing eficazes.</p>
+        <button onclick="toggleDetails(this)">Ver Detalhes</button>
+        <div class="course-details">
+          <h4>Objetivos</h4>
+          <p>Capacitar profissionais para atuar na área de marketing e vendas...</p>
+          
+          <h4>Duração</h4>
+          <p>4 anos (8 semestres)</p>
+          
+          <h4>Estrutura Curricular</h4>
+          <ul>
+            <li>Estratégias de Marketing</li>
+            <li>Pesquisa de Mercado</li>
+            <li>Gestão de Marcas</li>
+          </ul>
+          
+          <h4>Coordenador do Curso</h4>
+          <div class="course-faculty">
+            <img src="coordinator.jpg" alt="Foto do Coordenador do Curso" width="50" height="50">
+            <p>Prof. Dr. [Nome]</p>
+          </div>
+          
+          <a href="https://iscim.edu.mz/inscricao" class="cta-button">Inscrever-se</a>
+        </div>
+      </div>
+
+      <div class="course-card">
+        <h3>Licenciatura em Gestão Empresarial</h3>
+        <p>Desenvolva habilidades essenciais para gestão de negócios.</p>
+        <button onclick="toggleDetails(this)">Ver Detalhes</button>
+        <div class="course-details">
+          <h4>Objetivos</h4>
+          <p>Capacitar profissionais nas diversas áreas da gestão empresarial...</p>
+          
+          <h4>Duração</h4>
+          <p>4 anos (8 semestres)</p>
+          
+          <h4>Estrutura Curricular</h4>
+          <ul>
+            <li>Gestão de Recursos Humanos</li>
+            <li>Finanças Empresariais</li>
+            <li>Gestão de Operações</li>
+          </ul>
+          
+          <h4>Coordenador do Curso</h4>
+          <div class="course-faculty">
+            <img src="coordinator.jpg" alt="Foto do Coordenador do Curso" width="50" height="50">
+            <p>Prof. Dr. [Nome]</p>
+          </div>
+          
+          <a href="https://iscim.edu.mz/inscricao" class="cta-button">Inscrever-se</a>
+        </div>
+      </div>
+
+      <div class="course-card">
+        <h3>Licenciatura em Contabilidade e Auditoria</h3>
+        <p>Aprenda os princípios da contabilidade e auditoria.</p>
+        <button onclick="toggleDetails(this)">Ver Detalhes</button>
+        <div class="course-details">
+          <h4>Objetivos</h4>
+          <p>Formar profissionais para atuar na contabilidade e auditoria...</p>
+          
+          <h4>Duração</h4>
+          <p>4 anos (8 semestres)</p>
+          
+          <h4>Estrutura Curricular</h4>
+          <ul>
+            <li>Contabilidade Financeira</li>
+            <li>Auditoria Interna</li>
+            <li>Impostos e Legislação</li>
+          </ul>
+          
+          <h4>Coordenador do Curso</h4>
+          <div class="course-faculty">
+            <img src="coordinator.jpg" alt="Foto do Coordenador do Curso" width="50" height="50">
+            <p>Prof. Dr. [Nome]</p>
+          </div>
+          
+          <a href="https://iscim.edu.mz/inscricao" class="cta-button">Inscrever-se</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Contato</h4>
+        <p>Email: info@iscim.edu.mz</p>
+        <p>Telefone: +258 21 123 456</p>
+        <p>Endereço: Av. Eduardo Mondlane, 123<br>Maputo, Moçambique</p>
+      </div>
+
+      <div class="footer-section">
+        <h4>Links Rápidos</h4>
+        <p><a href="https://iscim.edu.mz/calendario">Calendário Académico</a></p>
+        <p><a href="https://iscim.edu.mz/biblioteca">Biblioteca</a></p>
+        <p><a href="https://iscim.edu.mz/portal-estudante">Portal do Estudante</a></p>
+      </div>
+
+      <div class="footer-section">
+        <h4>Redes Sociais</h4>
+        <p><a href="https://facebook.com/iscim">Facebook</a></p>
+        <p><a href="https://instagram.com/iscim">Instagram</a></p>
+        <p><a href="https://linkedin.com/school/iscim">LinkedIn</a></p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
